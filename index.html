@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TADE Techno HRMS - Human Resource Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-form">
+            <div class="login-header">
+                <i class="fas fa-building"></i>
+                <h1>TADE Techno HRMS</h1>
+                <p>Human Resource Management System</p>
+                <small>TADE Techno Solution Private Limited</small>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter email address" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full-width">Login</button>
+                <div class="login-demo-credentials">
+                    <h6>Admin Access Only:</h6>
+                    <div class="demo-accounts">
+                        <div><strong>Admin:</strong> admin@tadetechno.com / admin123</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <i class="fas fa-building header-logo"></i>
+                <span class="header-title">TADE Techno HRMS</span>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span id="currentUser">User</span>
+                    <span id="currentRole" class="user-role">Role</span>
+                </div>
+                <button id="logoutBtn" class="btn btn--outline btn--sm">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="nav-section">
+                <button class="nav-item active" data-module="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </button>
+            </div>
+            <div class="nav-section">
+                <button class="nav-item" data-module="workorder">
+                    <i class="fas fa-file-contract"></i>
+                    Work Orders
+                </button>
+            </div>
+            <div class="nav-section">
+                <button class="nav-item" data-module="employees">
+                    <i class="fas fa-users"></i>
+                    Manpower Details
+                </button>
+            </div>
+            <div class="nav-section">
+                <button class="nav-item" data-module="onboarding">
+                    <i class="fas fa-user-plus"></i>
+                    Employee Onboarding
+                </button>
+            </div>
+            <div class="nav-section">
+                <button class="nav-item" data-module="hrmanagement">
+                    <i class="fas fa-calendar-check"></i>
+                    HR Management
+                </button>
+            </div>
+            <div class="nav-section">
+                <button class="nav-item" data-module="grievances">
+                    <i class="fas fa-question-circle"></i>
+                    Employee Grievances
+                </button>
+            </div>
+            <div class="nav-section">
+                <button class="nav-item" data-module="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    Reports & MIS
+                </button>
+            </div>
+            <div class="nav-section">
+                <button class="nav-item" data-module="referrals">
+                    <i class="fas fa-handshake"></i>
+                    Referral Program
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Module -->
+            <div id="dashboardModule" class="module active">
+                <div class="module-header">
+                    <h2>Dashboard</h2>
+                    <div class="module-actions">
+                        <button class="btn btn--secondary btn--sm" id="refreshDashboard">
+                            <i class="fas fa-refresh"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="totalWorkOrders">0</h3>
+                            <p>Active Work Orders</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="totalEmployees">0</h3>
+                            <p>Total Employees</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="totalRevenue">₹0</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="pendingGrievances">0</h3>
+                            <p>Pending Grievances</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-charts">
+                    <div class="chart-container" style="position: relative; height: 400px;">
+                        <canvas id="workOrderChart"></canvas>
+                    </div>
+                    <div class="chart-container" style="position: relative; height: 400px;">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Work Order Module -->
+            <div id="workorderModule" class="module hidden">
+                <div class="module-header">
+                    <h2>Work Order Management</h2>
+                    <div class="module-actions">
+                        <button class="btn btn--primary" id="addWorkOrderBtn">
+                            <i class="fas fa-plus"></i> Add Work Order
+                        </button>
+                        <button class="btn btn--secondary" id="exportWorkOrdersBtn">
+                            <i class="fas fa-download"></i> Export Excel
+                        </button>
+                        <button class="btn btn--outline" id="printWorkOrdersBtn">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
+                </div>
+                <div class="module-filters">
+                    <input type="text" id="woSearch" class="form-control" placeholder="Search work orders...">
+                    <select id="woStatusFilter" class="form-control">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="data-table-container">
+                    <table class="data-table" id="workOrdersTable">
+                        <thead>
+                            <tr>
+                                <th>WO Number</th>
+                                <th>Client</th>
+                                <th>Type of Work</th>
+                                <th>Duration</th>
+                                <th>Total Value (₹)</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Employee/Manpower Module -->
+            <div id="employeesModule" class="module hidden">
+                <div class="module-header">
+                    <h2>Manpower Detail Management</h2>
+                    <div class="module-actions">
+                        <button class="btn btn--primary" id="addEmployeeBtn">
+                            <i class="fas fa-plus"></i> Add Employee
+                        </button>
+                        <button class="btn btn--secondary" id="exportEmployeesBtn">
+                            <i class="fas fa-download"></i> Export Excel
+                        </button>
+                        <button class="btn btn--outline" id="printEmployeesBtn">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
+                </div>
+                <div class="module-filters">
+                    <input type="text" id="employeeSearch" class="form-control" placeholder="Search employees...">
+                    <select id="workOrderFilter" class="form-control">
+                        <option value="">All Work Orders</option>
+                    </select>
+                    <select id="statusFilter" class="form-control">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="data-table-container">
+                    <table class="data-table" id="employeesTable">
+                        <thead>
+                            <tr>
+                                <th>Employee Code</th>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Work Order</th>
+                                <th>Contact</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Onboarding Module -->
+            <div id="onboardingModule" class="module hidden">
+                <div class="module-header">
+                    <h2>Employee Onboarding</h2>
+                    <div class="module-actions">
+                        <button class="btn btn--primary" id="generateOfferLetterBtn">
+                            <i class="fas fa-file-alt"></i> Generate Offer Letter
+                        </button>
+                        <button class="btn btn--secondary" id="generatePayslipBtn">
+                            <i class="fas fa-money-check"></i> Generate Payslip
+                        </button>
+                    </div>
+                </div>
+                <div class="onboarding-tabs">
+                    <button class="tab-btn active" data-tab="salary">Salary Breakup</button>
+                    <button class="tab-btn" data-tab="documents">Documents</button>
+                    <button class="tab-btn" data-tab="attendance">Attendance Setup</button>
+                </div>
+                <div class="tab-content active" id="salaryTab">
+                    <div class="salary-breakup-container">
+                        <div class="salary-header">
+                            <h4>Employee Salary Breakup (Indian Statutory)</h4>
+                            <button class="btn btn--primary btn--sm" id="setupSalaryBtn">
+                                <i class="fas fa-plus"></i> Setup New Salary
+                            </button>
+                        </div>
+                        <div id="salaryBreakupContent">
+                            <!-- Salary breakup content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content hidden" id="documentsTab">
+                    <div class="documents-container">
+                        <h4>Document Generation & Management</h4>
+                        <div class="document-actions">
+                            <button class="btn btn--outline" id="generateOfferBtn">
+                                <i class="fas fa-file-contract"></i> Offer Letter
+                            </button>
+                            <button class="btn btn--outline" id="generateAppointmentBtn">
+                                <i class="fas fa-id-card"></i> Appointment Letter
+                            </button>
+                            <button class="btn btn--outline" id="generateIncrementBtn">
+                                <i class="fas fa-arrow-up"></i> Increment Letter
+                            </button>
+                            <button class="btn btn--outline" id="generatePayslipDocBtn">
+                                <i class="fas fa-receipt"></i> Pay Slip
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content hidden" id="attendanceTab">
+                    <div class="attendance-setup-container">
+                        <h4>Monthly Attendance Setup</h4>
+                        <div class="attendance-controls">
+                            <select id="attendanceEmployeeSelect" class="form-control">
+                                <option value="">Select Employee</option>
+                            </select>
+                            <select id="attendanceMonthSelect" class="form-control">
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08" selected>August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                            <button class="btn btn--primary" id="loadAttendanceGridBtn">
+                                <i class="fas fa-calendar"></i> Load Attendance Grid
+                            </button>
+                        </div>
+                        <div id="attendanceGridContent">
+                            <!-- Attendance grid will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HR Management Module -->
+            <div id="hrmanagementModule" class="module hidden">
+                <div class="module-header">
+                    <h2>HR Management</h2>
+                    <div class="module-actions">
+                        <button class="btn btn--primary" id="processAttendanceBtn">
+                            <i class="fas fa-calculator"></i> Process Attendance
+                        </button>
+                        <button class="btn btn--secondary" id="processSalaryBtn">
+                            <i class="fas fa-money-bill"></i> Process Salary
+                        </button>
+                    </div>
+                </div>
+                <div class="hr-tabs">
+                    <button class="tab-btn active" data-tab="attendance">Attendance Processing</button>
+                    <button class="tab-btn" data-tab="salary">Salary Processing</button>
+                    <button class="tab-btn" data-tab="approvals">Approvals</button>
+                </div>
+                <div class="tab-content active" id="attendanceTab">
+                    <div class="processing-container">
+                        <h4>Monthly Attendance Processing</h4>
+                        <div class="processing-controls">
+                            <select id="processMonthSelect" class="form-control">
+                                <option value="08">August 2024</option>
+                                <option value="07">July 2024</option>
+                                <option value="06">June 2024</option>
+                            </select>
+                            <button class="btn btn--primary" id="calculateAttendanceBtn">
+                                <i class="fas fa-calculator"></i> Calculate Attendance
+                            </button>
+                            <button class="btn btn--secondary" id="saveAttendanceBtn">
+                                <i class="fas fa-save"></i> Save Attendance
+                            </button>
+                        </div>
+                        <div id="attendanceProcessingResults">
+                            <!-- Processing results will be shown here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content hidden" id="salaryTab">
+                    <div class="processing-container">
+                        <h4>Monthly Salary Processing</h4>
+                        <div class="processing-controls">
+                            <select id="salaryProcessMonthSelect" class="form-control">
+                                <option value="08">August 2024</option>
+                                <option value="07">July 2024</option>
+                                <option value="06">June 2024</option>
+                            </select>
+                            <button class="btn btn--primary" id="calculateSalaryBtn">
+                                <i class="fas fa-calculator"></i> Calculate Salary
+                            </button>
+                            <button class="btn btn--secondary" id="saveSalaryBtn">
+                                <i class="fas fa-save"></i> Save Salary
+                            </button>
+                        </div>
+                        <div id="salaryProcessingResults">
+                            <!-- Salary processing results will be shown here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content hidden" id="approvalsTab">
+                    <div class="approvals-container">
+                        <h4>Pending Approvals</h4>
+                        <div id="pendingApprovals">
+                            <!-- Pending approvals will be shown here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grievances Module -->
+            <div id="grievancesModule" class="module hidden">
+                <div class="module-header">
+                    <h2>Employee Grievances & Help Desk</h2>
+                    <div class="module-actions">
+                        <button class="btn btn--primary" id="raiseGrievanceBtn">
+                            <i class="fas fa-plus"></i> Raise Grievance
+                        </button>
+                        <button class="btn btn--secondary" id="exportGrievancesBtn">
+                            <i class="fas fa-download"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+                <div class="module-filters">
+                    <select id="grievanceCategoryFilter" class="form-control">
+                        <option value="">All Categories</option>
+                        <option value="HR">HR</option>
+                        <option value="IT Support">IT Support</option>
+                        <option value="Admin">Admin</option>
+                        <option value="HR Policy">HR Policy</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    <select id="grievanceStatusFilter" class="form-control">
+                        <option value="">All Status</option>
+                        <option value="Open">Open</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+                <div class="data-table-container">
+                    <table class="data-table" id="grievancesTable">
+                        <thead>
+                            <tr>
+                                <th>Ticket Number</th>
+                                <th>Employee</th>
+                                <th>Category</th>
+                                <th>Subject</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reports Module -->
+            <div id="reportsModule" class="module hidden">
+                <div class="module-header">
+                    <h2>Reports & MIS Dashboard</h2>
+                    <div class="module-actions">
+                        <button class="btn btn--primary" id="generateCustomReportBtn">
+                            <i class="fas fa-chart-bar"></i> Generate Custom Report
+                        </button>
+                        <button class="btn btn--secondary" id="exportAllReportsBtn">
+                            <i class="fas fa-download"></i> Export All Data
+                        </button>
+                    </div>
+                </div>
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h4>Project Wise Reports</h4>
+                        <p>Work order wise revenue, cost and resource utilization</p>
+                        <button class="btn btn--outline btn--sm generate-report-btn" data-report="project">
+                            <i class="fas fa-file-pdf"></i> Generate PDF
+                        </button>
+                    </div>
+                    <div class="report-card">
+                        <h4>Employee Master Report</h4>
+                        <p>Complete employee database with all details</p>
+                        <button class="btn btn--outline btn--sm generate-report-btn" data-report="employee">
+                            <i class="fas fa-file-excel"></i> Generate Excel
+                        </button>
+                    </div>
+                    <div class="report-card">
+                        <h4>Salary Master Report</h4>
+                        <p>Monthly salary with statutory deductions</p>
+                        <button class="btn btn--outline btn--sm generate-report-btn" data-report="salary">
+                            <i class="fas fa-file-pdf"></i> Generate PDF
+                        </button>
+                    </div>
+                    <div class="report-card">
+                        <h4>Attendance Analytics</h4>
+                        <p>Monthly attendance analysis and trends</p>
+                        <button class="btn btn--outline btn--sm generate-report-btn" data-report="attendance">
+                            <i class="fas fa-chart-line"></i> Generate Analytics
+                        </button>
+                    </div>
+                </div>
+                <div class="report-output" id="reportOutput">
+                    <h4>Report Results</h4>
+                    <div id="reportContent"></div>
+                </div>
+            </div>
+
+            <!-- Referrals Module -->
+            <div id="referralsModule" class="module hidden">
+                <div class="module-header">
+                    <h2>Referral Program</h2>
+                    <div class="module-actions">
+                        <button class="btn btn--primary" id="addReferralBtn">
+                            <i class="fas fa-user-plus"></i> Add Referral
+                        </button>
+                        <button class="btn btn--secondary" id="sendBulkEmailBtn">
+                            <i class="fas fa-envelope"></i> Send Bulk Email
+                        </button>
+                    </div>
+                </div>
+                <div class="referral-tabs">
+                    <button class="tab-btn active" data-tab="referrals">Referrals</button>
+                    <button class="tab-btn" data-tab="bulkmail">Bulk Mail</button>
+                </div>
+                <div class="tab-content active" id="referralsTab">
+                    <div class="data-table-container">
+                        <table class="data-table" id="referralsTable">
+                            <thead>
+                                <tr>
+                                    <th>Referred By</th>
+                                    <th>Candidate Name</th>
+                                    <th>Position</th>
+                                    <th>Contact</th>
+                                    <th>Status</th>
+                                    <th>Bonus (₹)</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-content hidden" id="bulkmailTab">
+                    <div class="bulk-mail-container">
+                        <h4>Bulk Email Management</h4>
+                        <div class="email-composer">
+                            <div class="form-group">
+                                <label class="form-label">Email Template</label>
+                                <select id="emailTemplate" class="form-control">
+                                    <option value="">Select Template</option>
+                                    <option value="job">Job Posting</option>
+                                    <option value="newsletter">Company Newsletter</option>
+                                    <option value="policy">Policy Update</option>
+                                    <option value="announcement">Announcement</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Subject</label>
+                                <input type="text" id="emailSubject" class="form-control" placeholder="Enter email subject">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Content</label>
+                                <textarea id="emailContent" class="form-control" rows="8" placeholder="Enter email content"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn--primary" id="sendBulkEmailsBtn">
+                                    <i class="fas fa-paper-plane"></i> Send Bulk Emails
+                                </button>
+                                <button class="btn btn--secondary" id="saveEmailTemplateBtn">
+                                    <i class="fas fa-save"></i> Save Template
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Forms -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal Title</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
